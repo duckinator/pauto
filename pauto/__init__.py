@@ -93,10 +93,17 @@ class PautoProgram():
         left, top = min_loc
         right, bottom = (left + width), (top + height)
 
+        current_step = self.steps[self.step_number]
+
+        if "before" in current_step:
+            map(self.xdotool, current_step["before"])
+
         # Move the mouse to the specified location.
         self.mousemove(left + (width / 2), top + (height / 2))
 
-        self.xdotool(self.steps[self.step_number])
+        if "after" in current_step:
+            map(self.xdotool, current_step["after"])
+
         time.sleep(2)
 
         self.step_number += 1

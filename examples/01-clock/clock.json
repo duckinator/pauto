@@ -1,8 +1,15 @@
 {
   "templateDir": "./templates",
   "steps": [
-    "click 1",
-    "click 1",
-    "click 1"
+    {
+      "before": [
+        "type 'cat ./examples/01-clock/clock.json'",
+        "key Return",
+        "sleep 3"
+      ],
+      "after": ["click 1"]
+    },
+    {"after": ["click 1"]},
+    {"after": ["click 1"]}
   ]
 }
