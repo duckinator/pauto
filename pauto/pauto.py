@@ -6,12 +6,48 @@ import cv2
 import tempfile
 import shutil
 import os
+import time
+from subprocess import Popen, PIPE
+
+
+import os
 
 class PautoProgram():
     def __init__(self, template_dir):
         self.dirpath = tempfile.mkdtemp()
         self.step_number = 1
         self.template_dir = template_dir
+
+    def xdotool(self, command):
+        print("xdotool %s" % command)
+        return Popen("xdotool %s" % command, stdout=PIPE, shell=True).stdout.read()
+
+    def getmouselocation(self):
+        x, y, screen, window = map(
+                lambda tmp: int(tmp.split(":")[1]),
+                self.xdotool("getmouselocation").split(" "))
+
+        return (x, y)
+
+    def mousemove(self, x, y):
+        cur_x, cur_y = self.getmouselocation()
+        new_x = cur_x
+        new_y = cur_y
+
+        while (new_x != x) or (new_y != y):
+            if new_x > x:
+                new_x -= 1
+            elif new_x < x:
+                new_x += 1
+
+            if new_y > y:
+                new_y -= 1
+            elif new_y < y:
+                new_y += 1
+
+            self.xdotool("mousemove %i %i" % (new_x, new_y))
+
+        time.sleep(1)
 
     def cleanup(self):
         shutil.rmtree(self.dirpath)
@@ -45,20 +81,15 @@ class PautoProgram():
 
         result = cv2.matchTemplate(image, template, method)
 
-        # We want the minimum squared difference
+        # TODO: Figure out what this copypasta'd code does.
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
-        # Get the size of the template. This is the same size as the match.
-        trows, tcols = template.shape[:2]
+        # Get the outer positions of the match.
+        left, top = min_loc
+        right, bottom = (left + width), (top + height)
 
-        top_left = min_loc
-        bottom_right = (top_left[0] + width, top_left[1] + height)
-
-        # Draw the rectangle on image
-        cv2.rectangle(image, top_left, bottom_right, 255, 2)
-
-        cv2.imshow('output', image)
-        cv2.waitKey(0)
+        # Move the mouse to the specified location.
+        self.mousemove(left + (width / 2), top + (height / 2))
 
         self.step_number += 1
 
