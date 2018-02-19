@@ -3,12 +3,24 @@
   "steps": [
     {
       "before": [
+        "mousemove 0 0",
         "type 'cat ./examples/01-clock/clock.json'",
         "key Return",
-        "sleep 3"
+        "sleep 3",
+        "type 'open ./examples/01-clock/templates/000.png'",
+        "key Return",
+        "sleep 3",
+        "key space",
+        "sleep 2",
+        "key space",
+        "sleep 2",
+        "key space",
+        "sleep 2"
       ],
-      "after": ["click 1"]
+      {"after": ["click 1"]}
     },
+    {"after": ["click 1"]},
+    {"after": ["click 1"]},
     {"after": ["click 1"]},
     {"after": ["click 1"]}
   ]
