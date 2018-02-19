@@ -17,7 +17,7 @@
         "key space",
         "sleep 2"
       ],
-      {"after": ["click 1"]}
+      "after": ["click 1"]
     },
     {"after": ["click 1"]},
     {"after": ["click 1"]},
