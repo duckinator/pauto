@@ -8,18 +8,20 @@ import shutil
 import os
 import time
 from subprocess import Popen, PIPE
-
-
-import os
+import sys
+import json
 
 class PautoProgram():
-    def __init__(self, template_dir):
+    def __init__(self, script_file):
         self.dirpath = tempfile.mkdtemp()
-        self.step_number = 1
-        self.template_dir = template_dir
+        self.step_number = 0
+        self.script_file = script_file
+        with open(script_file) as f:
+            self.script = json.load(f)
+        self.steps = self.script["steps"]
+        self.template_dir = os.path.join(os.path.dirname(self.script_file), self.script["templateDir"])
 
     def xdotool(self, command):
-        print("xdotool %s" % command)
         return Popen("xdotool %s" % command, stdout=PIPE, shell=True).stdout.read()
 
     def getmouselocation(self):
@@ -33,6 +35,9 @@ class PautoProgram():
         cur_x, cur_y = self.getmouselocation()
         new_x = cur_x
         new_y = cur_y
+
+        if new_x == x and new_y == y:
+            return
 
         while (new_x != x) or (new_y != y):
             if new_x > x:
@@ -91,6 +96,9 @@ class PautoProgram():
         # Move the mouse to the specified location.
         self.mousemove(left + (width / 2), top + (height / 2))
 
+        self.xdotool(self.steps[self.step_number])
+        time.sleep(2)
+
         self.step_number += 1
 
         return self.step_number
@@ -102,5 +110,9 @@ class PautoProgram():
         pass
 
 if __name__ == '__main__':
-    program = PautoProgram("./templates")
+    if len(sys.argv) == 1 or "--help" in sys.argv or "-h" in sys.argv:
+        print("Usage: %s JSON_SCRIPT" % sys.argv[0])
+        exit(1)
+
+    program = PautoProgram(sys.argv[1])
     program.run()
