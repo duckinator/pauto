@@ -39,16 +39,25 @@ class PautoProgram():
         if new_x == x and new_y == y:
             return
 
+        # TODO: Make this less gross.
         while (new_x != x) or (new_y != y):
             if new_x > x:
-                new_x -= 1
+                new_x -= 3
+                if new_x < x:
+                    new_x = x
             elif new_x < x:
-                new_x += 1
+                new_x += 3
+                if new_x > x:
+                    new_x = x
 
             if new_y > y:
-                new_y -= 1
+                new_y -= 3
+                if new_y < y:
+                    new_y = y
             elif new_y < y:
-                new_y += 1
+                new_y += 3
+                if new_y > y:
+                    new_y = y
 
             self.xdotool("mousemove %i %i" % (new_x, new_y))
 
