@@ -125,10 +125,15 @@ class PautoProgram():
         self.cleanup()
         pass
 
-if __name__ == '__main__':
+
+def main():
     if len(sys.argv) == 1 or "--help" in sys.argv or "-h" in sys.argv:
         print("Usage: %s JSON_SCRIPT" % sys.argv[0])
-        exit(1)
+        sys.exit(1)
 
     program = PautoProgram(sys.argv[1])
     program.run()
+
+
+if __name__ == '__main__':
+    main()
